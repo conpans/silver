@@ -185,27 +185,6 @@
             border-radius: 8px;
         }
         
-        .wheel-container::before,
-        .wheel-container::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 26px;
-            pointer-events: none;
-            z-index: 2;
-        }
-        
-        .wheel-container::before {
-            top: 0;
-            background: linear-gradient(to bottom, #222 0%, transparent 100%);
-        }
-        
-        .wheel-container::after {
-            bottom: 0;
-            background: linear-gradient(to top, #222 0%, transparent 100%);
-        }
-        
         .wheel {
             height: 100%;
             overflow-y: scroll;
@@ -223,27 +202,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
-            color: #555;
+            color: #888;
             scroll-snap-align: center;
-        }
-        
-        .wheel-item.selected {
-            color: #fff;
-        }
-        
-        .wheel-highlight {
-            position: absolute;
-            top: 50%;
-            left: 4px;
-            right: 4px;
-            height: 28px;
-            transform: translateY(-50%);
-            background: #333;
-            border-radius: 6px;
-            pointer-events: none;
-            z-index: 1;
         }
         
         .calc-results {
@@ -446,7 +408,6 @@
                             <div class="calc-coin-label">Quarters</div>
                             <div class="calc-coin-value" id="vq">0</div>
                             <div class="wheel-container">
-                                <div class="wheel-highlight"></div>
                                 <div class="wheel" id="wq" onscroll="onWheel('q')">
                                     <div class="wheel-item"></div>
                                     ${[...Array(100)].map((_, i) => `<div class="wheel-item">${i}</div>`).join('')}
@@ -458,7 +419,6 @@
                             <div class="calc-coin-label">Dimes</div>
                             <div class="calc-coin-value" id="vd">0</div>
                             <div class="wheel-container">
-                                <div class="wheel-highlight"></div>
                                 <div class="wheel" id="wd" onscroll="onWheel('d')">
                                     <div class="wheel-item"></div>
                                     ${[...Array(100)].map((_, i) => `<div class="wheel-item">${i}</div>`).join('')}
@@ -470,7 +430,6 @@
                             <div class="calc-coin-label">Halves</div>
                             <div class="calc-coin-value" id="vh">0</div>
                             <div class="wheel-container">
-                                <div class="wheel-highlight"></div>
                                 <div class="wheel" id="wh" onscroll="onWheel('h')">
                                     <div class="wheel-item"></div>
                                     ${[...Array(100)].map((_, i) => `<div class="wheel-item">${i}</div>`).join('')}
