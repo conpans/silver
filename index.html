@@ -154,7 +154,7 @@
         
         .calc-inputs {
             display: flex;
-            gap: 8px;
+            gap: 4px;
             margin-bottom: 10px;
         }
         
@@ -167,46 +167,76 @@
             font-size: 9px;
             color: #555;
             text-transform: uppercase;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         
-        .stepper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
-        }
-        
-        .stepper-btn {
-            width: 36px;
-            height: 36px;
-            border: none;
-            background: #333;
-            color: #fff;
-            font-size: 20px;
-            font-weight: 300;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            -webkit-touch-callout: none;
-            user-select: none;
-        }
-        
-        .stepper-btn:active { background: #444; }
-        
-        .stepper-value {
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 600;
-            color: #fff;
+        .wheel-container {
+            height: 100px;
+            overflow: hidden;
+            position: relative;
             background: #222;
+            border-radius: 8px;
+        }
+        
+        .wheel-container::before,
+        .wheel-container::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 35px;
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        .wheel-container::before {
+            top: 0;
+            background: linear-gradient(to bottom, #222 0%, transparent 100%);
+        }
+        
+        .wheel-container::after {
+            bottom: 0;
+            background: linear-gradient(to top, #222 0%, transparent 100%);
+        }
+        
+        .wheel {
+            height: 100%;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .wheel::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .wheel-item {
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #888;
+            scroll-snap-align: center;
+        }
+        
+        .wheel-item.selected {
+            color: #fff;
+        }
+        
+        .wheel-highlight {
+            position: absolute;
+            top: 50%;
+            left: 4px;
+            right: 4px;
+            height: 34px;
+            transform: translateY(-50%);
+            background: #333;
             border-radius: 6px;
+            pointer-events: none;
+            z-index: 1;
         }
         
         .calc-results {
@@ -350,14 +380,13 @@
             document.getElementById('cr-melt').textContent = '$' + melt.toFixed(2);
             document.getElementById('cr-5').textContent = '$' + (melt * 1.05).toFixed(2);
             document.getElementById('cr-8').textContent = '$' + (melt * 1.08).toFixed(2);
-            
-            document.getElementById('vq').textContent = coinCounts.q;
-            document.getElementById('vd').textContent = coinCounts.d;
-            document.getElementById('vh').textContent = coinCounts.h;
         }
 
-        function adjust(coin, delta) {
-            coinCounts[coin] = Math.max(0, coinCounts[coin] + delta);
+        function onWheel(coin) {
+            const wheel = document.getElementById('w' + coin);
+            const itemHeight = 34;
+            const selected = Math.round(wheel.scrollTop / itemHeight);
+            coinCounts[coin] = Math.min(99, Math.max(0, selected));
             updateCalc();
         }
 
@@ -407,26 +436,35 @@
                     <div class="calc-inputs">
                         <div class="calc-coin">
                             <div class="calc-coin-label">Quarters</div>
-                            <div class="stepper">
-                                <button class="stepper-btn" onclick="adjust('q',-1)">−</button>
-                                <div class="stepper-value" id="vq">0</div>
-                                <button class="stepper-btn" onclick="adjust('q',1)">+</button>
+                            <div class="wheel-container">
+                                <div class="wheel-highlight"></div>
+                                <div class="wheel" id="wq" onscroll="onWheel('q')">
+                                    <div class="wheel-item"></div>
+                                    ${[...Array(100)].map((_, i) => `<div class="wheel-item">${i}</div>`).join('')}
+                                    <div class="wheel-item"></div>
+                                </div>
                             </div>
                         </div>
                         <div class="calc-coin">
                             <div class="calc-coin-label">Dimes</div>
-                            <div class="stepper">
-                                <button class="stepper-btn" onclick="adjust('d',-1)">−</button>
-                                <div class="stepper-value" id="vd">0</div>
-                                <button class="stepper-btn" onclick="adjust('d',1)">+</button>
+                            <div class="wheel-container">
+                                <div class="wheel-highlight"></div>
+                                <div class="wheel" id="wd" onscroll="onWheel('d')">
+                                    <div class="wheel-item"></div>
+                                    ${[...Array(100)].map((_, i) => `<div class="wheel-item">${i}</div>`).join('')}
+                                    <div class="wheel-item"></div>
+                                </div>
                             </div>
                         </div>
                         <div class="calc-coin">
                             <div class="calc-coin-label">Halves</div>
-                            <div class="stepper">
-                                <button class="stepper-btn" onclick="adjust('h',-1)">−</button>
-                                <div class="stepper-value" id="vh">0</div>
-                                <button class="stepper-btn" onclick="adjust('h',1)">+</button>
+                            <div class="wheel-container">
+                                <div class="wheel-highlight"></div>
+                                <div class="wheel" id="wh" onscroll="onWheel('h')">
+                                    <div class="wheel-item"></div>
+                                    ${[...Array(100)].map((_, i) => `<div class="wheel-item">${i}</div>`).join('')}
+                                    <div class="wheel-item"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
